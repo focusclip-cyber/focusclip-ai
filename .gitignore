@@ -1,0 +1,6 @@
+﻿backend/downloads/
+backend/clips/
+backend/.env
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Detected Speakers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <h1>Detected Speakers</h1>
+
+        <h3>Video ID</h3>
+        <p id="videoId"></p>
+
+        <h3>Transcript Preview</h3>
+        <div id="transcript"
+            style="width:100%;margin:auto;border:1px solid #334155;padding:15px;border-radius:8px;text-align:left;height:200px;overflow:auto;">
+        </div>
+
+        <br>
+
+        <h3>Detected Speakers</h3>
+        <p style="margin-bottom:15px;">Click a speaker to find their moments and cut clips.</p>
+
+        <div id="speakerList"></div>
+
+    </div>
+
+    <script>
+
+        function selectSpeaker(name) {
+            localStorage.setItem("selectedSpeaker", name);
+            window.location.href = "clips.html";
+        }
+
+        const data = JSON.parse(localStorage.getItem("focusclipData"));
+
+        if (!data) {
+            document.body.innerHTML = "<div class='page'><p>No data found. Go back and analyze a video first.</p></div>";
+            throw new Error("No focusclipData in localStorage");
+        }
+
+        document.getElementById("videoId").innerHTML = data.video_id;
+
+        document.getElementById("transcript").innerHTML = data.transcript;
+
+        const speakers = data.speakers || [];
+
+        const container = document.getElementById("speakerList");
+
+        if (speakers.length === 0) {
+            container.innerHTML = "<p>No speakers were detected.</p>";
+        }
+
+        speakers.forEach(name => {
+
+            const btn = document.createElement("button");
+            btn.textContent = "👤 " + name;
+            btn.style.marginBottom = "12px";
+            btn.onclick = () => selectSpeaker(name);
+
+            container.appendChild(btn);
+            container.appendChild(document.createElement("br"));
+
+        });
+
+    </script>
+
+</body>
+
+</html>

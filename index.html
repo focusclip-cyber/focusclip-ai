@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FocusClip AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>FocusClip AI</h1>
+
+        <p>Turn Long Videos Into Speaker-Focused Shorts</p>
+
+        <input
+            type="text"
+            id="youtubeLink"
+            placeholder="Paste YouTube URL Here">
+
+        <button onclick="analyzeVideo()">
+            Analyze Video
+        </button>
+
+        <div id="loading" class="loading">
+
+            <h3>Analyzing Video...</h3>
+
+            <p>Please wait. This may take 1-3 minutes.</p>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

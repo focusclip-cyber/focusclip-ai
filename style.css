@@ -1,0 +1,120 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#0f172a;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    overflow-y:auto;
+    padding:40px 20px;
+}
+
+.container, .page{
+    width:650px;
+    max-width:100%;
+    background:#1e293b;
+    padding:40px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 0 25px rgba(0,0,0,.35);
+    margin:auto;
+}
+
+.page{
+    width:700px;
+}
+
+button{
+    margin-bottom:12px;
+}
+
+.clip-card{
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:20px;
+    text-align:left;
+}
+
+.clip-card h3{
+    margin-bottom:10px;
+    color:#e2e8f0;
+}
+
+.clip-card video{
+    width:100%;
+    border-radius:8px;
+    margin-bottom:10px;
+    background:black;
+}
+
+.download-link{
+    display:inline-block;
+    background:#2563eb;
+    color:white;
+    text-decoration:none;
+    padding:10px 15px;
+    border-radius:8px;
+    font-size:15px;
+    transition:.3s;
+}
+
+.download-link:hover{
+    background:#1d4ed8;
+}
+
+h1{
+    font-size:42px;
+    margin-bottom:15px;
+}
+
+p{
+    color:#cbd5e1;
+    margin-bottom:25px;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:8px;
+    font-size:17px;
+    margin-bottom:20px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.loading{
+    display:none;
+    margin-top:30px;
+}
+
+.loading h3{
+    margin-bottom:10px;
+}
+
+.loading p{
+    color:#94a3b8;
+}

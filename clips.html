@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Speaker Clips</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <h1 id="heading">Generating Clips...</h1>
+
+        <div id="status" class="loading" style="display:block;">
+            <h3 id="statusText">Finding moments where this speaker talks...</h3>
+            <p>This may take a minute or two.</p>
+        </div>
+
+        <div id="clipsContainer"></div>
+
+        <button onclick="window.location.href='speakers.html'" style="margin-top:20px;">
+            ⬅ Back to Speakers
+        </button>
+
+    </div>
+
+    <script>
+
+        const API_BASE = "http://127.0.0.1:5000";
+
+        const data = JSON.parse(localStorage.getItem("focusclipData"));
+        const speaker = localStorage.getItem("selectedSpeaker");
+
+        if (!data || !speaker) {
+            document.body.innerHTML =
+                "<div class='page'><p>Missing video or speaker info. Go back and pick a speaker again.</p>" +
+                "<button onclick=\"window.location.href='speakers.html'\">⬅ Back to Speakers</button></div>";
+            throw new Error("Missing focusclipData or selectedSpeaker");
+        }
+
+        document.getElementById("heading").textContent = "Clips for " + speaker;
+
+        async function run() {
+
+            try {
+
+                // STEP 1 - Ask backend which timestamps belong to this speaker
+                const tsResponse = await fetch(API_BASE + "/speaker-timestamps", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        video_id: data.video_id,
+                        speaker: speaker
+                    })
+                });
+
+                if (!tsResponse.ok) {
+                    throw new Error("Backend returned " + tsResponse.status);
+                }
+
+                const tsData = await tsResponse.json();
+
+                if (tsData.status !== "success") {
+                    throw new Error(tsData.message || "Could not find timestamps");
+                }
+
+                if (!tsData.timestamps || tsData.timestamps.length === 0) {
+                    document.getElementById("statusText").textContent =
+                        "No clear moments found for " + speaker + ".";
+                    document.querySelector("#status p").textContent =
+                        "Try analyzing the video again, or pick a different speaker.";
+                    return;
+                }
+
+                document.getElementById("statusText").textContent =
+                    "Found " + tsData.timestamps.length + " moment(s). Cutting clips...";
+
+                // STEP 2 - Ask backend to actually cut the clips with ffmpeg
+                const clipResponse = await fetch(API_BASE + "/generate-clips", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        video_id: data.video_id,
+                        speaker: speaker,
+                        timestamps: tsData.timestamps
+                    })
+                });
+
+                if (!clipResponse.ok) {
+                    throw new Error("Backend returned " + clipResponse.status);
+                }
+
+                const clipData = await clipResponse.json();
+
+                if (clipData.status !== "success") {
+                    throw new Error(clipData.message || "Could not generate clips");
+                }
+
+                document.getElementById("status").style.display = "none";
+
+                const container = document.getElementById("clipsContainer");
+
+                clipData.clips.forEach((clipUrl, index) => {
+
+                    const fullUrl = API_BASE + clipUrl;
+
+                    const card = document.createElement("div");
+                    card.className = "clip-card";
+
+                    const title = document.createElement("h3");
+                    title.textContent = "Clip " + (index + 1);
+
+                    const video = document.createElement("video");
+                    video.src = fullUrl;
+                    video.controls = true;
+
+                    const downloadLink = document.createElement("a");
+                    downloadLink.href = fullUrl;
+                    downloadLink.download = speaker + "_clip_" + (index + 1) + ".mp4";
+                    downloadLink.textContent = "⬇ Download Clip";
+                    downloadLink.className = "download-link";
+
+                    card.appendChild(title);
+                    card.appendChild(video);
+                    card.appendChild(downloadLink);
+
+                    container.appendChild(card);
+
+                });
+
+            } catch (error) {
+
+                document.getElementById("statusText").textContent = "Something went wrong.";
+                document.querySelector("#status p").textContent = error.message;
+                console.error(error);
+
+            }
+
+        }
+
+        run();
+
+    </script>
+
+</body>
+
+</html>
