@@ -83,6 +83,7 @@ def speaker_timestamps():
         data = request.get_json()
         video_id = data.get("video_id")
         speaker = data.get("speaker")
+        topic = data.get("topic")
 
         if not video_id or video_id not in VIDEO_CACHE:
             return jsonify({
@@ -95,13 +96,18 @@ def speaker_timestamps():
 
         segments = VIDEO_CACHE[video_id]["segments"]
 
-        print(f"STEP - Finding timestamps for {speaker}...")
-        timestamps = get_speaker_timestamps(segments, speaker)
+        if topic:
+            print(f"STEP - Finding moments where {speaker} talks about \"{topic}\"...")
+        else:
+            print(f"STEP - Finding timestamps for {speaker}...")
+
+        timestamps = get_speaker_timestamps(segments, speaker, topic=topic)
         print(f"STEP - Found {len(timestamps)} range(s) for {speaker}")
 
         return jsonify({
             "status": "success",
             "speaker": speaker,
+            "topic": topic,
             "timestamps": timestamps
         })
 
